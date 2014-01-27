@@ -7,6 +7,8 @@
 #define MAX_POWER  400
 #define MIN_POWER -400
 
+const static boolean DEBUG = true;
+
 // Accessory descriptor. It's how Arduino identifies itself in Android.
 char accessoryName[] = "UDOO Silkworm jeep";
 char manufacturer[] = "Example, Inc.";
@@ -32,9 +34,18 @@ void setup() {
   delay(2000);
   
   motor.init();
+  stopEngine();
 }
 
 void loop() {
+  if (DEBUG) {
+    readingFromSerial();
+  } else {
+    readingFromADK();
+  }
+}
+
+void readingFromADK() {
   Usb.Task();
 
   // Starting listening when ADK is available
@@ -127,6 +138,18 @@ int motorProtection(int v) {
     return v;
   } else {
     return 0;
+  }
+}
+
+// Testing rover with Serial port
+void readingFromSerial() {
+  int incomingByte = 0;
+  if (Serial.available() > 0) {
+    incomingByte = Serial.read();
+
+    // say what you got:
+    Serial.print("I received: ");
+    Serial.println(incomingByte, DEC);
   }
 }
 
