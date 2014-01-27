@@ -41,15 +41,92 @@ void loop() {
   if (adk.isReady()) {
       adk.read(&bytesRead, BUFFSIZE, buffer);
     if (bytesRead > 0) {
-      jeepCommandInterpreter(buffer[0]);
+      jeepCommandInterpreter(buffer[0], buffer[1]);
     }
   }
 }
 
-void jeepCommandInterpreter(uint8_t command) {
+void jeepCommandInterpreter(uint8_t command, uint8_t speed) {
   switch(command) {
+    case 0:
+      goForward(speed);
+      break;
+    case 1:
+      goBackward(speed);
+      break;
+    case 2:
+      goLeft(speed);
+      break;
+    case 3:
+      goRight(speed);
+      break;
     default:
       Serial.println("Command not available");
       break;
   }
 }
+
+// Main movement command
+void goForward(uint8_t speed) {
+}
+
+void goBackward(uint8_t speed) {
+  turnBack();
+  goForward(speed);
+}
+
+void goLeft(uint8_t speed) {
+  turnLeft();
+  goForward(speed);
+}
+
+void goRight(uint8_t speed) {
+  turnRight();
+  goForward(speed);
+}
+
+// Helper movement
+int speedToPower(uint8_t speed) {
+  int v;
+  switch(speed) {
+    case 1:
+      v = 150;
+      break;
+    case 2:
+      v = 250;
+      break;
+    case 3:
+      v = 300;
+      break;
+    default:
+      v = 0;
+      break;
+  }
+  
+  // Return a safe motor power
+  return motorProtection(v);
+}
+
+void turnLeft() {
+}
+
+void turnRight() {
+}
+
+void turnBack() {
+}
+
+void stopEngine() {
+  motor.setM1Speed(0);
+  motor.setM2Speed(0);
+}
+
+// Emergency checks
+int motorProtection(int v) {
+  if (v <= MAX_POWER && v >= MIN_POWER) {
+    return v;
+  } else {
+    return 0;
+  }
+}
+
