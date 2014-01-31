@@ -54,25 +54,39 @@ void readingFromADK() {
   if (adk.isReady()) {
       adk.read(&bytesRead, BUFFSIZE, buffer);
     if (bytesRead > 0) {
-      jeepCommandInterpreter(buffer[0], buffer[1]);
+      jeepCommandInterpreter(buffer[0] - 48, buffer[1] - 48);
     }
   }
 }
 
-void jeepCommandInterpreter(uint8_t command, uint8_t speed) {
-  switch(command) {
+void jeepCommandInterpreter(uint8_t commandMovement, uint8_t commandSpeed) {
+  int vPower = speedToPower(commandSpeed);
+  Serial.print("Required power: ");Serial.println(vPower);
+
+  switch(commandMovement) {
     case 0:
-      goForward(speed);
+      Serial.println("Received command: 0 -> move forward");
+      goForward(vPower);
       break;
     case 1:
-      goBackward(speed);
+      Serial.println("Received command: 1 -> move backward");
+      goBackward(vPower);
       break;
     case 2:
-      goLeft(speed);
+      Serial.println("Received command: 2 -> turn left");
+      turnLeft(vPower);
       break;
     case 3:
-      goRight(speed);
+      Serial.println("Received command: 3 -> turn right");
+      turnRight(vPower);
       break;
+    case 4:
+      Serial.println("Received command: 4 -> turn back");
+      turnBack(vPower);
+      break;
+    case 5:
+      Serial.println("Received command: 5 -> testing all movements");
+      testAllMovements(vPower);
     default:
       Serial.println("Command not available");
       break;
@@ -80,25 +94,51 @@ void jeepCommandInterpreter(uint8_t command, uint8_t speed) {
 }
 
 // Main movement command
-void goForward(uint8_t speed) {
+void goForward(int vPower) {
+  motor.setM1Speed(vPower);
+  motor.setM2Speed(vPower);
+
+  delay(1000);
+  stopEngine();
+}
+void goBackward(int vPower) {
+  motor.setM1Speed(-vPower);
+  motor.setM2Speed(-vPower);
+
+  delay(1000);
+  stopEngine();
 }
 
-void goBackward(uint8_t speed) {
-  turnBack();
-  goForward(speed);
+void turnLeft(int vPower) {
+  motor.setM1Speed(-vPower);
+  motor.setM2Speed(vPower);
+
+  delay(500);
+  stopEngine();
 }
 
-void goLeft(uint8_t speed) {
-  turnLeft();
-  goForward(speed);
+void turnRight(int vPower) {
+  motor.setM1Speed(vPower);
+  motor.setM2Speed(-vPower);
+
+  delay(500);
+  stopEngine();
 }
 
-void goRight(uint8_t speed) {
-  turnRight();
-  goForward(speed);
+void turnBack(int vPower) {
+  motor.setM1Speed(vPower);
+  motor.setM2Speed(-vPower);
+
+  delay(1000);
+  stopEngine();
 }
 
-// Helper movement
+void stopEngine() {
+  motor.setM1Speed(0);
+  motor.setM2Speed(0);
+}
+
+// Movement helpers
 int speedToPower(uint8_t speed) {
   int v;
   switch(speed) {
@@ -118,20 +158,6 @@ int speedToPower(uint8_t speed) {
   
   // Return a safe motor power
   return motorProtection(v);
-}
-
-void turnLeft() {
-}
-
-void turnRight() {
-}
-
-void turnBack() {
-}
-
-void stopEngine() {
-  motor.setM1Speed(0);
-  motor.setM2Speed(0);
 }
 
 // Emergency checks
