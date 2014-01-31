@@ -146,13 +146,37 @@ int motorProtection(int v) {
 
 // Testing rover with Serial port
 void readingFromSerial() {
-  int incomingByte = 0;
-  if (Serial.available() > 0) {
-    incomingByte = Serial.read();
+  int bytesRead = 0;
+  while (Serial.available() > 0) {
+    if (bytesRead < BUFFSIZE) {
+      buffer[bytesRead] = Serial.read();
+      bytesRead++;
+    }
+    delay(20);
+  }
 
-    // say what you got:
-    Serial.print("I received: ");
-    Serial.println(incomingByte, DEC);
+  if (bytesRead == 2) {
+    // Send commands to internal controller
+    jeepCommandInterpreter(buffer[0] - 48, buffer[1] - 48);
+    resetBuffer();
+  }
+}
+
+void testAllMovements(int vPower) {
+  jeepCommandInterpreter(0, vPower);
+  jeepCommandInterpreter(1, vPower);
+  jeepCommandInterpreter(2, vPower);
+  jeepCommandInterpreter(3, vPower);
+
+  stopEngine();
+}
+
+// Generic helpers
+void resetBuffer() {
+  int index = 0;
+  while (index < BUFFSIZE) {
+    buffer[index] = 0;
+    index++;
   }
 }
 
