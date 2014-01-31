@@ -7,7 +7,8 @@
 #define MAX_POWER  400
 #define MIN_POWER -400
 
-const static boolean DEBUG = true;
+// Command interpreter logic
+const static boolean DEBUG = false;
 
 // Accessory descriptor. It's how Arduino identifies itself in Android.
 char accessoryName[] = "UDOO Silkworm jeep";
@@ -30,8 +31,9 @@ DualMC33926MotorShield motor;
 void setup() {
   cpu_irq_enable();
   Serial.begin(115200);
+  delay(1000);
   Serial.println("All power to the engines!");
-  delay(2000);
+  delay(1000);
   
   motor.init();
   stopEngine();
@@ -137,6 +139,7 @@ int motorProtection(int v) {
   if (v <= MAX_POWER && v >= MIN_POWER) {
     return v;
   } else {
+    Serial.println("DANGER: too much V!");
     return 0;
   }
 }
