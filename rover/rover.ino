@@ -58,8 +58,8 @@ void readingFromADK() {
   }
 }
 
-void jeepCommandInterpreter(uint8_t commandMovement, uint8_t commandSpeed) {
-  int vPower = motorProtection(commandSpeed);
+void jeepCommandInterpreter(uint8_t commandMovement, unsigned int commandSpeed) {
+  unsigned int vPower = motorProtection(commandSpeed);
   Serial.print("Required power: ");Serial.println(vPower);
 
   switch(commandMovement) {
@@ -138,7 +138,7 @@ void stopEngine() {
 }
 
 // Emergency checks
-int motorProtection(int v) {
+unsigned int motorProtection(int v) {
   if (v >= 0 && v <= MAX_POWER) {
     return v;
   } else {
@@ -187,7 +187,7 @@ uint8_t extractMovement() {
   return buffer[0] - 48;
 }
 
-uint8_t extractSpeed() {
+unsigned int extractSpeed() {
   uint8_t speedBuffer[3] = { 45, 45, 45 };
 
   int i = 0;
