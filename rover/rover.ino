@@ -5,7 +5,6 @@
 
 #define BUFFSIZE   128
 #define MAX_POWER  400
-#define MIN_POWER -400
 
 // Command interpreter logic
 const static boolean DEBUG = false;
@@ -54,13 +53,13 @@ void readingFromADK() {
   if (adk.isReady()) {
       adk.read(&bytesRead, BUFFSIZE, buffer);
     if (bytesRead > 0) {
-      jeepCommandInterpreter(buffer[0] - 48, buffer[1] - 48);
+      jeepCommandInterpreter(extractMovement(), extractSpeed());
     }
   }
 }
 
 void jeepCommandInterpreter(uint8_t commandMovement, uint8_t commandSpeed) {
-  int vPower = speedToPower(commandSpeed);
+  int vPower = motorProtection(commandSpeed);
   Serial.print("Required power: ");Serial.println(vPower);
 
   switch(commandMovement) {
@@ -138,31 +137,9 @@ void stopEngine() {
   motor.setM2Speed(0);
 }
 
-// Movement helpers
-int speedToPower(uint8_t speed) {
-  int v;
-  switch(speed) {
-    case 1:
-      v = 150;
-      break;
-    case 2:
-      v = 250;
-      break;
-    case 3:
-      v = 300;
-      break;
-    default:
-      v = 0;
-      break;
-  }
-  
-  // Return a safe motor power
-  return motorProtection(v);
-}
-
 // Emergency checks
 int motorProtection(int v) {
-  if (v <= MAX_POWER && v >= MIN_POWER) {
+  if (v >= 0 && v <= MAX_POWER) {
     return v;
   } else {
     Serial.println("DANGER: too much V!");
@@ -183,7 +160,7 @@ void readingFromSerial() {
 
   if (bytesRead == 2) {
     // Send commands to internal controller
-    jeepCommandInterpreter(buffer[0] - 48, buffer[1] - 48);
+    jeepCommandInterpreter(extractMovement(), extractSpeed());
     resetBuffer();
   }
 }
@@ -204,5 +181,21 @@ void resetBuffer() {
     buffer[index] = 0;
     index++;
   }
+}
+
+uint8_t extractMovement() {
+  return buffer[0] - 48;
+}
+
+uint8_t extractSpeed() {
+  uint8_t speedBuffer[3] = { 45, 45, 45 };
+
+  int i = 0;
+  while (buffer[i + 2] >= 48 && i < 3) {
+    speedBuffer[i] = buffer[i + 2];
+    i++;
+  }
+
+  return atoi((char*)speedBuffer);
 }
 
