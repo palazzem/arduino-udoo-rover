@@ -18,13 +18,13 @@ Documentation
 With this Arduino sketch you can control two DC motors using a motor driver.
 This function can be used to send commands to Arduino :
 
-..code-block:: c
+.. code-block:: c
 
 	void jeepCommandInterpreter(uint8_t commandMovement, unsigned int commandSpeed);
 
 ``commandMovement`` defines where the rover should go according to this switch case:
 
-..code-block:: c
+.. code-block:: c
 
 	case 0:
       Serial.println("Received command: 0 -> move forward");
