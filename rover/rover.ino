@@ -10,15 +10,15 @@
 const static boolean DEBUG = false;
 
 // Accessory descriptor. It's how Arduino identifies itself in Android.
-char accessoryName[] = "UDOO Silkworm jeep";
+char accessoryName[] = "UDOO DroidRover";
 char manufacturer[] = "Example, Inc.";
-char model[] = "UDOO-Silkworm";
- 
+char model[] = "UDOO-Rover";
+
 char versionNumber[] = "0.1.0";
 char serialNumber[] = "1";
 char url[] = "http://www.example.com";
 
-// ADK configuration 
+// ADK configuration
 USBHost Usb;
 ADK adk(&Usb, manufacturer, model, accessoryName, versionNumber, url, serialNumber);
 uint8_t buffer[BUFFSIZE];
@@ -33,7 +33,7 @@ void setup() {
   delay(1000);
   Serial.println("All power to the engines!");
   delay(1000);
-  
+
   motor.init();
   stopEngine();
 }
@@ -86,6 +86,7 @@ void jeepCommandInterpreter(uint8_t commandMovement, unsigned int commandSpeed) 
     case 5:
       Serial.println("Received command: 5 -> testing all movements");
       testAllMovements(vPower);
+      break;
     default:
       Serial.println("Command not available");
       break;
@@ -198,4 +199,3 @@ unsigned int extractSpeed() {
 
   return atoi((char*)speedBuffer);
 }
-
