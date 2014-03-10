@@ -21,13 +21,13 @@ This function can be used to send commands to Arduino:
 
 .. code-block:: c
 
-	void jeepCommandInterpreter(uint8_t commandMovement, unsigned int commandSpeed);
+    void jeepCommandInterpreter(uint8_t commandMovement, unsigned int commandSpeed);
 
 ``commandMovement`` defines where the rover should go according to this switch case:
 
 .. code-block:: c
 
-		case 0:
+    case 0:
       Serial.println("Received command: 0 -> move forward");
       goForward(vPower);
       break;
@@ -47,10 +47,10 @@ This function can be used to send commands to Arduino:
       Serial.println("Received command: 4 -> turn back");
       turnBack(vPower);
       break;
-		case 5:
-			Serial.println("Received command: 5 -> testing all movements");
-			testAllMovements(vPower);
-			break;
+    case 5:
+      Serial.println("Received command: 5 -> testing all movements");
+      testAllMovements(vPower);
+      break;
 
 Note: command ``5`` will test all rover movements.
 
