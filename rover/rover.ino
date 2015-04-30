@@ -1,4 +1,3 @@
-#include "variant.h"
 #include <stdio.h>
 #include <adk.h>
 #include "DualMC33926MotorShield.h"
@@ -51,7 +50,7 @@ void readingFromADK() {
 
   // Starting listening when ADK is available
   if (adk.isReady()) {
-      adk.read(&bytesRead, BUFFSIZE, buffer);
+    adk.read(&bytesRead, BUFFSIZE, buffer);
     if (bytesRead > 0) {
       jeepCommandInterpreter(extractMovement(), extractSpeed());
     }
@@ -60,9 +59,9 @@ void readingFromADK() {
 
 void jeepCommandInterpreter(uint8_t commandMovement, unsigned int commandSpeed) {
   unsigned int vPower = motorProtection(commandSpeed);
-  Serial.print("Required power: ");Serial.println(vPower);
+  Serial.print("Required power: "); Serial.println(vPower);
 
-  switch(commandMovement) {
+  switch (commandMovement) {
     case 0:
       Serial.println("Received command: 0 -> move forward");
       goForward(vPower);
