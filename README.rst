@@ -3,6 +3,9 @@ Arduino UDOO rover
 ==================
 
 Arduino rover with MC33926 motor driver shield powered by UDOO prototyping board.
+It uses the `MC33926 motor driver`_ library.
+
+.. _MC33926 motor driver: https://github.com/pololu/dual-mc33926-motor-shield
 
 ADK 2012 compatibility
 ----------------------
